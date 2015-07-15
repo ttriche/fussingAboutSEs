@@ -1,2 +1,1 @@
-# fussingAboutSEs
-like it says on the tin
+slides.Rmd
