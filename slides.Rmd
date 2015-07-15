@@ -90,7 +90,7 @@ See help("Defunct")
 ```
 
 [That's not consistent with BioC deprecation guidelines](http://www.bioconductor.org/developers/how-to/deprecation/http://www.bioconductor.org/developers/how-to/deprecation/)
-Speaking as a sucker who actually followed the linked rules, this kind of sucks.
+Speaking as a chump who actually followed the rules, this is a drag.
 (You could always argue that WORKING protocols go in Nature Protocols, however.)
 
 ---
