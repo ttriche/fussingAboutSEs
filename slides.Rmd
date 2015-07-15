@@ -6,9 +6,9 @@ output: ioslides_presentation
 
 ---
 
-# boilerplate
+# A bedrock data structure
 
-This is all very nice...
+So hey, we have a complicated experiment and we'd like to summarize it. 
 
 ```R 
 library(SummarizedExperiment)
@@ -24,14 +24,19 @@ rse <- SummarizedExperiment(assays=SimpleList(counts=counts),
                             rowRanges=rowRanges, colData=colData)
 ```
 
+Said experiment involves a lot of flat priors.
+
 ---
 
 # wat (part I) 
 
-This is perhaps less nice:
+However, apparently that's not what the function does?
 
 ```R
 is(SummarizedExperiment(), "SummarizedExperiment")
+```
+```
+FALSE 
 ```
 
 ---
@@ -45,6 +50,9 @@ is(SummarizedExperiment(assays=SimpleList(counts=counts),
                         rowRanges=rowRanges, colData=colData),
    "SummarizedExperiment")
 ```
+```
+FALSE 
+```
 
 ---
 
@@ -56,24 +64,57 @@ Fine, what about the previous-release behavior?
 is(GenomicRanges:::SummarizedExperiment(counts, rowRanges, colData),
    "SummarizedExperiment")
 ```
-
----
-
-# This is a little silly
-
-[It's not consistent with BioC deprecation guidelines, either](http://www.bioconductor.org/developers/how-to/deprecation/http://www.bioconductor.org/developers/how-to/deprecation/)
-
-```R 
-se <- GenomicRanges:::SummarizedExperiment(counts, rowRanges, colData)
-rowData(se)
 ```
-
+FALSE 
+```
 ---
 
 # No worries, this is just for internal use
 
 Unless anyone reads the [Nature Methods paper](http://www.nature.com/nmeth/journal/v12/n2/fig_tab/nmeth.3252_F2.html)
 
-![Doh](images/natmeth.jpg)
+![D'oh](images/natmeth.jpg)
 
+---
+
+# I'm so excited about this thing I saw in Nature Methods!!1
+
+```R 
+se <- GenomicRanges:::SummarizedExperiment(counts, rowRanges, colData)
+rowData(se)
+```
+```
+Error: 'rowData' is defunct.
+Use 'rowRanges' instead.
+See help("Defunct")
+```
+
+[That's not consistent with BioC deprecation guidelines](http://www.bioconductor.org/developers/how-to/deprecation/http://www.bioconductor.org/developers/how-to/deprecation/)
+Speaking as a sucker who actually followed the linked rules, this kind of sucks.
+(You could always argue that WORKING protocols go in Nature Protocols, however.)
+
+---
+
+# Bonus!  For Nature Methods readers
+
+Proving once again that anything published is already out of date:  
+
+```R
+exptData(se)
+```
+```
+List of length 0
+Warning message:
+'exptData' is deprecated.
+Use 'metadata' instead.
+See help("Deprecated") 
+```
+
+But at least it's not defunct() yet like that other one. 
+Maybe the thing to do here is issue a corrigendum?
+That always makes everything better
+
+---
+
+# Fin 
 
