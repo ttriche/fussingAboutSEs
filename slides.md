@@ -1,14 +1,20 @@
 ---
 title: "Some fussing about SummarizedExperiment"
 author: Tim Triche, Jr.
-date: July 20th, 2015
+date: February 19th, 2018
 output: ioslides_presentation
 
 ---
 
-# boilerplate
+# A bedrock data structure
 
-This is all very nice...
+*Nota bene:* The majority of the following inconsistencies are resolved as of 
+February 2018, and in fact were resolved some time ago, following the migration
+of the old SummarizedExperiment class to RangedSummarizedExperiment in 2016.
+  
+*For posterity, here were the issues as of June 2015.*  
+
+So hey, we have a complicated experiment and we'd like to summarize it. 
 
 ```R 
 library(SummarizedExperiment)
@@ -24,15 +30,26 @@ rse <- SummarizedExperiment(assays=SimpleList(counts=counts),
                             rowRanges=rowRanges, colData=colData)
 ```
 
+Said experiment involves a lot of flat priors.
+
 ---
 
 # wat (part I) 
 
-This is perhaps less nice:
+However, apparently that's not what the function does?
 
 ```R
 is(SummarizedExperiment(), "SummarizedExperiment")
 ```
+```
+# bioc-release behavior as of June 2015
+FALSE 
+```
+```
+# bioc-release behavior as of February 2018
+TRUE
+```
+So, this has been fixed. 
 
 ---
 
@@ -45,6 +62,15 @@ is(SummarizedExperiment(assays=SimpleList(counts=counts),
                         rowRanges=rowRanges, colData=colData),
    "SummarizedExperiment")
 ```
+```
+# bioc-release behavior as of June 2015
+FALSE 
+```
+```
+# bioc-release behavior as of February 2018
+TRUE
+```
+So, this has also been fixed.
 
 ---
 
@@ -56,24 +82,81 @@ Fine, what about the previous-release behavior?
 is(GenomicRanges:::SummarizedExperiment(counts, rowRanges, colData),
    "SummarizedExperiment")
 ```
-
----
-
-# This is a little silly
-
-[It's not consistent with BioC deprecation guidelines, either](http://www.bioconductor.org/developers/how-to/deprecation/http://www.bioconductor.org/developers/how-to/deprecation/)
-
-```R 
-se <- GenomicRanges:::SummarizedExperiment(counts, rowRanges, colData)
-rowData(se)
 ```
+# bioc-release behavior as of June 2015
+FALSE 
+```
+```
+# bioc-release behavior as of February 2018
+Error in get(name, envir = asNamespace(pkg), inherits = FALSE) : 
+  object 'SummarizedExperiment' not found
+```
+
+But this *did* migrate to an entirely new package, and `:::` is poor form. 
 
 ---
 
 # No worries, this is just for internal use
 
+*Reminder: These complaints are out of date, as is any published paper.*
+
 Unless anyone reads the [Nature Methods paper](http://www.nature.com/nmeth/journal/v12/n2/fig_tab/nmeth.3252_F2.html)
 
-![Doh](images/natmeth.jpg)
+![D'oh](images/natmeth.jpg)
 
+---
 
+# I'm so excited about this thing I saw in Nature Methods!!1
+
+*Reminder: These complaints are out of date, as is any published paper.*
+
+```R 
+se <- GenomicRanges:::SummarizedExperiment(counts, rowRanges, colData)
+rowData(se)
+```
+```
+# bioc-release behavior as of June 2015
+Error: 'rowData' is defunct.
+Use 'rowRanges' instead.
+See help("Defunct")
+```
+```
+# bioc-release behavior as of February 2018
+Error in get(name, envir = asNamespace(pkg), inherits = FALSE) : 
+  object 'SummarizedExperiment' not found
+```
+
+[That was not consistent with BioC deprecation guidelines](http://www.bioconductor.org/developers/how-to/deprecation/http://www.bioconductor.org/developers/how-to/deprecation/)
+Speaking as a chump who actually followed the rules, this was a drag.
+(You could always argue that WORKING protocols go in Nature Protocols, however.)
+
+---
+
+# Bonus!  For Nature Methods readers
+
+Proving once again that anything published is already out of date:  
+
+```R
+exptData(se)
+```
+```
+# bioc-release behavior as of June 2015
+List of length 0
+Warning message:
+'exptData' is deprecated.
+Use 'metadata' instead.
+See help("Deprecated") 
+```
+```
+# bioc-release behavior as of February 2018
+Error in exptData(se) : could not find function "exptData"
+```
+
+*2015*: at least it's not defunct() yet like that other one. 
+*2018*: well, it's not like we weren't warned. 
+
+Thankfully, after a mildly painful transition, most of this is ancient history.
+
+---
+
+# Fin 
